@@ -1,15 +1,17 @@
+// const { application } = require('express');
+require('dotenv').config()
 const express=require('express');
 const app=express();
 const port=3000;
 const connectDB=require('./db/connect')
-require('dotenv').config()
+const taskrouter=require('./routes/tasks')
+
+// middleware
+app.use(express.json());
+
+app.use('/tasks',taskrouter)
 
 
-
-app.get('/',(req,res)=>{
-    res.writeHead(200,{'Content-Type':'text/html'})
-    res.end('./public/index.html');
-})
 const startserver=async()=>{
     try {
         await connectDB(process.env.connectionstring);
