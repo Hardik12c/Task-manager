@@ -1,13 +1,23 @@
 const express=require('express')
+const task=require('../models/taskschema')
 
 const taskrouter=express.Router();
 
 taskrouter.route('/')
+.all((req,res,next)=>{
+    res.statusCode=200;
+    next();
+})
 .get((req,res)=>{
     res.end("giving all tasks");
 })
-.post((req,res)=>{
-    res.end(`will add the task ${req.body.name} with status ${req.body.completed}`);
+.post(async(req,res)=>{
+    try {
+        const createdtask=await task.create(req.body);
+        res.send({createdtask});
+    } catch (error) {
+        res.send(error);
+    }
 })
 
 taskrouter.route('/:taskid')
