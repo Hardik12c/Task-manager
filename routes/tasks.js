@@ -4,31 +4,59 @@ const task=require('../models/taskschema')
 const taskrouter=express.Router();
 
 taskrouter.route('/')
-.all((req,res,next)=>{
-    res.statusCode=200;
-    next();
-})
-.get((req,res)=>{
-    res.end("giving all tasks");
+.get(async(req,res)=>{
+    try {
+        const gettasks= await task.find({});
+        res.status(200).json({gettasks});
+    } catch (error) {
+        res.send(error);
+    }
+    
 })
 .post(async(req,res)=>{
     try {
         const createdtask=await task.create(req.body);
-        res.send({createdtask});
+        res.status(201).json({createdtask});
     } catch (error) {
         res.send(error);
     }
 })
 
 taskrouter.route('/:taskid')
-.get((req,res)=>{
-    res.end("giving this task");
+.get(async(req,res)=>{
+    try {
+        const singletask=await task.findOne({_id:req.params.taskid});
+        if(!singletask){
+            return res.status(404).json({message:"task not found"});
+        }
+        res.status(200).json({singletask});
+    } catch (error) {
+        res.status(500).send(error);
+    }
 })
-.put((req,res)=>{
-    res.end(`will update the task ${req.body.name}`)
+.put(async(req,res)=>{
+    try {
+        const updatetask=await task.findOneAndUpdate({_id:req.params.taskid},req.body,{
+            runValidators:true,new:true,
+        });
+        if(!updatetask){
+            return res.status(404).json({message:"task not found"});
+        }
+        res.status(200).json({task:updatetask,mission:"success"});
+    } catch (error) {
+        res.status(500).send(error);
+    }
 })
-.delete((req,res)=>{
-    res.end(`will delete the task`);
+.delete(async(req,res)=>{
+    try {
+        const deletetask=await task.findOneAndDelete({_id:req.params.taskid});
+        if(!deletetask){
+            return res.status(404).json({message:"task not found"});
+        }
+        res.status(200).json({deletetask});
+    } catch (error) {
+        res.status(500).send(error);
+    }
 })
 
 module.exports=taskrouter;
