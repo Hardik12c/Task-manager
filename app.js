@@ -1,4 +1,4 @@
-// const { application } = require('express');
+const { application } = require('express');
 require('dotenv').config()
 const express=require('express');
 const app=express();
@@ -7,9 +7,10 @@ const connectDB=require('./db/connect')
 const taskrouter=require('./routes/tasks')
 
 // middleware
+app.use(express.static('./public'));
 app.use(express.json());
 
-app.use('/tasks',taskrouter)
+app.use('/api/v1/tasks',taskrouter)
 
 
 const startserver=async()=>{
