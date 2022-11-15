@@ -1,7 +1,6 @@
 require('dotenv').config()
 const express=require('express');
 const app=express();
-const port=3000;
 const connectDB=require('./db/connect')
 const taskrouter=require('./routes/tasks')
 const notfound=require('./middleware/not-found')
@@ -12,6 +11,9 @@ app.use(express.json());
 
 app.use('/api/v1/tasks',taskrouter)
 app.use(notfound);
+
+
+const port= process.env.PORT||3000;
 
 const startserver=async()=>{
     try {
